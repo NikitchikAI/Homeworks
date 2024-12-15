@@ -1,0 +1,121 @@
+---
+ title: "Основы обработки данных с помощью R и Dplyr"
+ author: "a.nikitchik@yandex.ru"
+ format: 
+   md:
+     output-file: README.md
+---
+
+## Цель работы 
+
+1. Развить практические навыки использования языка программирования R для обработки данных
+2. Закрепить знания базовых типов данных языка R
+3. Развить практические навыки использования функций обработки данных пакета dplyr – функции select(), filter(), mutate(), arrange(), group_by()
+
+## Исходные данные 
+ 
+1. Программное обеспечение Windows 11 
+2. Rstudio Desktop и библиотека Dplyr
+3. Интерпретатор языка R 4.4.2
+4. Пакет dplyr
+5. Пакет nycflights13
+ 
+ 
+## Ход работы
+
+### 1. Установка пакета nycflights13
+
+```{r}
+#install.packages("nycflights13")
+```
+
+### 2. Подгружение библиотек
+
+```{r}
+library(nycflights13)
+library(dplyr)
+```
+
+### 3. Сколько встроенных в пакет nycflight13 датафреймов?
+
+```{r}
+length(data(package = "nycflights13")$results[, "Item"])
+```
+
+### 4. Сколько строк в каждом датафрейме?
+
+```{r}
+list(nrow(airlines), nrow(airports), nrow(flights), nrow(planes), nrow(weather))
+```
+
+### 5. Сколько столбцов в каждом датафрейме?
+
+```{r}
+sapply(list(flights, airlines, airports, planes, weather), ncol)
+```
+
+### 6. Как посмотреть примерный вид датафрейма? 
+
+```{r}
+flights %>% glimpse()
+```
+
+### 7. Сколько компаний-перевозчиков (carrier) учитывают эти наборы данных (представлено в наборах данных)?
+
+```{r}
+a = flights %>% filter(!is.na(carrier)) %>% distinct(carrier) 
+nrow(a)
+```
+
+### 6. Сколько рейсов принял аэропорт John F Kennedy Intl в мае?
+
+```{r}
+a = flights %>% filter(dest == "JFK", month == 5)
+nrow(a)
+```
+
+### 7. Какой самый северный аэропорт?
+
+```{r}
+airports %>% glimpse()
+airports %>% arrange(desc(lat)) %>% head(1)
+```
+
+### 8. Какой аэропорт самый высокогорный (находится выше всех над уровнем моря)?
+
+```{r}
+airports %>% arrange(desc(alt)) %>% head(1)
+```
+
+
+### 9. Какие бортовые номера у самых старых самолетов?
+
+```{r}
+planes %>% arrange(year) %>% head(10)
+```
+
+### 10. Какая средняя температура воздуха была в сентябре в аэропорту John F Kennedy Intl (в градусах Цельсия).
+
+```{r}
+weather %>% filter(origin == "JFK", month == 9, !is.na(temp)) %>% summarise(mt = mean((temp - 32) * 5 / 9))
+```
+
+### 11. Самолеты какой авиакомпании совершили больше всего вылетов в июне?
+
+```{r}
+flights %>% filter(month == 6) %>% count(carrier, sort = TRUE) %>% head(1)
+```
+
+### 12. Самолеты какой авиакомпании задерживались чаще других в 2013 году?
+
+```{r}
+flights %>% filter(dep_delay > 0 & year == 2013) %>% count(carrier, sort = TRUE) %>% head(1)
+```
+
+## Оценка результата
+
+Были развиты практические навыки использования функций обработки данных пакета dplyr на примере "nycflight13"
+
+## Вывод
+
+Был получен опыт обработки данных в ходе анализа пакета nycflight13 
